@@ -12,27 +12,39 @@ library.add(faIgloo)
 
 const Color = (props) => {
   return (
-    <div className="card">
-      <div className="card-body bg-primary">
-        asdölfk
+    <div className="card mb-3">
+      <div className="card-header"
+           style={ {backgroundColor: props.selectedColor} }>
+        <b>LED status</b>
       </div>
       <div className="card-body">
-        <CirclePicker />
+        <h5 className="card-title">Change LED color</h5>
+        <CirclePicker onChangeComplete={ props.onChangeComplete }
+                      color={ props.selectedColor }/>
       </div>
     </div>
-  )
+  );
 }
 
 class App extends Component {
+  state = {
+    color: '#fff',
+  };
+
+  handleColorChangeComplete = (color) => {
+    this.setState({ color: color.hex });
+  };
+
   render() {
     return (
       <div className="container">
         <h3>Home Control</h3>
         <hr />
-            <Color />
+        <Color onChangeComplete={ this.handleColorChangeComplete }
+               selectedColor={ this.state.color }/>
       </div>
     );
-  }
+  };
 }
 
 export default App;
