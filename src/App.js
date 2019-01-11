@@ -14,6 +14,49 @@ import { faIgloo } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faIgloo)
 
+let timerId = 0;
+const timerDefault = {
+  'id': timerId,
+  'time': '00:00',
+  'days': [
+    {
+      'key': 'monday',
+      'displayname': 'Mon',
+      'alarm': false,
+    },
+    {
+      'key': 'tuesday',
+      'displayname': 'Tue',
+      'alarm': false,
+    },
+    {
+      'key': 'wednesday',
+      'displayname': 'Wed',
+      'alarm': false,
+    },
+    {
+      'key': 'thursday',
+      'displayname': 'Thu',
+      'alarm': false,
+    },
+    {
+      'key': 'friday',
+      'displayname': 'fri',
+      'alarm': false,
+    },
+    {
+      'key': 'saturday',
+      'displayname': 'sat',
+      'alarm': false,
+    },
+    {
+      'key': 'sunday',
+      'displayname': 'sun',
+      'alarm': false,
+    },
+  ]
+};
+
 const Color = (props) => {
   return (
     <div className="card mb-3">
@@ -50,7 +93,9 @@ const Timer = (props) => {
           className="timepicker"
           onChange={onChange}
         />
-        <button type="button" className="btn btn-primary ml-2">
+        <button type="button"
+                className="btn btn-primary ml-2"
+                onClick={ props.addTimer }>
           Add timer
         </button>
         <br/>
@@ -78,27 +123,11 @@ const TimerList = (props) => {
             return (<li className="list-group-item">
               { timer.time }
               <br/>
-              <TimerDay timer={ timer }
-                        day={ "Mon" }
-                        alarm={ timer.mon }/>
-              <TimerDay timer={ timer }
-                        day={ "Tue" }
-                        alarm={ timer.tue }/>
-              <TimerDay timer={ timer }
-                        day={ "Wed" }
-                        alarm={ timer.wed }/>
-              <TimerDay timer={ timer }
-                        day={ "Thu" }
-                        alarm={ timer.thu }/>
-              <TimerDay timer={ timer }
-                        day={ "Fri" }
-                        alarm={ timer.fri }/>
-              <TimerDay timer={ timer }
-                        day={ "Sat" }
-                        alarm={ timer.sat }/>
-              <TimerDay timer={ timer }
-                        day={ "Sun" }
-                        alarm={ timer.sun }/>
+              {timer.days.map((day) => {
+                return (
+                  <TimerDay timer={ timer }
+                            day={ day }/>
+              )})}
             </li>
           )})}
         </ul>
@@ -121,16 +150,16 @@ const NewTimerDay = (props) => {
 }
 
 const TimerDay = (props) => {
-  const id = props.timer.id + "-timer-" + props.day;
+  const id = props.timer.id + "-timer-" + props.day.key;
   return (
     <div className="custom-control custom-checkbox custom-control-inline mt-2">
       <input type="checkbox"
              className="custom-control-input"
              id={ id }
-             checked={ props.alarm }
+             checked={ props.day.alarm }
              readOnly />
       <label className="custom-control-label"
-             htmlFor={ id } >{ props.day }</label>
+             htmlFor={ id } >{ props.day.displayname }</label>
     </div>
   );
 }
@@ -143,25 +172,85 @@ class App extends Component {
       {
         'id': 0,
         'time': '06:00',
-        'mon': true,
-        'tue': true,
-        'wed': true,
-        'thu': true,
-        'fri': true,
-        'sat': false,
-        'sun': false,
+        'days': [
+          {
+            'key': 'monday',
+            'displayname': 'Mon',
+            'alarm': true,
+          },
+          {
+            'key': 'tuesday',
+            'displayname': 'Tue',
+            'alarm': true,
+          },
+          {
+            'key': 'wednesday',
+            'displayname': 'Wed',
+            'alarm': true,
+          },
+          {
+            'key': 'thursday',
+            'displayname': 'Thu',
+            'alarm': true,
+          },
+          {
+            'key': 'friday',
+            'displayname': 'fri',
+            'alarm': true,
+          },
+          {
+            'key': 'saturday',
+            'displayname': 'sat',
+            'alarm': false,
+          },
+          {
+            'key': 'sunday',
+            'displayname': 'sun',
+            'alarm': false,
+          },
+        ]
       },
       {
         'id': 1,
         'time': '15:30',
-        'mon': false,
-        'tue': true,
-        'wed': true,
-        'thu': false,
-        'fri': true,
-        'sat': false,
-        'sun': true,
-      },
+        'days': [
+          {
+            'key': 'monday',
+            'displayname': 'Mon',
+            'alarm': false,
+          },
+          {
+            'key': 'tuesday',
+            'displayname': 'Tue',
+            'alarm': true,
+          },
+          {
+            'key': 'wednesday',
+            'displayname': 'Wed',
+            'alarm': false,
+          },
+          {
+            'key': 'thursday',
+            'displayname': 'Thu',
+            'alarm': true,
+          },
+          {
+            'key': 'friday',
+            'displayname': 'fri',
+            'alarm': true,
+          },
+          {
+            'key': 'saturday',
+            'displayname': 'sat',
+            'alarm': true,
+          },
+          {
+            'key': 'sunday',
+            'displayname': 'sun',
+            'alarm': false,
+          },
+        ]
+      }
     ]
   };
 
