@@ -30,118 +30,36 @@ const Color = (props) => {
   );
 }
 
-class NewTimer extends Component {
-  static initialState = () => ({
-    'newTimerData': {
-      'id': 0,
-      'time': '00:00',
-      'days': [
-        {
-          'key': 'monday',
-          'displayname': 'Mon',
-          'alarm': false,
-        },
-        {
-          'key': 'tuesday',
-          'displayname': 'Tue',
-          'alarm': false,
-        },
-        {
-          'key': 'wednesday',
-          'displayname': 'Wed',
-          'alarm': false,
-        },
-        {
-          'key': 'thursday',
-          'displayname': 'Thu',
-          'alarm': false,
-        },
-        {
-          'key': 'friday',
-          'displayname': 'Fri',
-          'alarm': false,
-        },
-        {
-          'key': 'saturday',
-          'displayname': 'Sat',
-          'alarm': false,
-        },
-        {
-          'key': 'sunday',
-          'displayname': 'Sun',
-          'alarm': false,
-        },
-      ]
-    }
-  });
-  state = NewTimer.initialState();
-  resetNewTimer = () => this.setState(NewTimer.initialState());
-
-  changeAlarm = (day) => {
-    console.log("changeAlarm", day);
-    this.setState(prevState => {
-      let newTimerData = prevState.newTimerData;
-      newTimerData.days.find((o, i) => {
-        if (o.key === day) {
-          newTimerData.days[i]['alarm'] = !newTimerData.days[i]['alarm'];
-          return true;
-        }
-      });
-      console.log(this.state.newTimerData);
-      return {
-        'newTimerData': newTimerData
-      };
-    });
-  };
-
-  changeTime = (time) => {
-    console.log("changeTime", time.format('HH:mm'));
-    this.setState(prevState => {
-      let newTimerData = prevState.newTimerData;
-      newTimerData['time'] = time.format('HH:mm');
-      return {
-        'newTimerData': newTimerData
-      };
-    });
-  };
-
-  saveTimer = () => {
-    console.log("saveTimer", this.state.newTimerData);
-    this.props.onAddTimer(this.state.newTimerData);
-    this.resetNewTimer();
-  };
-
-  render() {
-    return (
-      <div className="card mb-3">
-        <div className="card-header">
-          <b>New Timer</b>
-        </div>
-        <div className="card-body">
-          <TimePicker
-            style={{ width: 60 }}
-            showSecond={ false }
-            defaultValue={moment()}
-            className="timepicker"
-            onChange={ this.changeTime }
-          />
-          <button type="button"
-                  className="btn btn-primary ml-2"
-                  onClick={ this.saveTimer }>
-            Add timer
-          </button>
-          <br/>
-          {this.state.newTimerData.days.map((day) => {
-            return (
-              <NewTimerDay key={ day.key }
-                           timer={ this.state.newTimerData }
-                           day={ day }
-                           onChangeAlarm={ this.changeAlarm }/>
-          )})}
-        </div>
+const NewTimer = (props) => {
+  return (
+    <div className="card mb-3">
+      <div className="card-header">
+        <b>New Timer</b>
       </div>
-    );
-  };
+      <div className="card-body">
+        <TimePicker
+          style={{ width: 60 }}
+          showSecond={ false }
+          defaultValue={moment()}
+          className="timepicker"
+          onChange={ props.changeTime }
+        />
+        <button type="button"
+                className="btn btn-primary ml-2"
+                onClick={ props.saveTimer }>
+          Add timer
+        </button>
+        <br/>
+        {props.newTimerData.days.map((day) => {
+          return (
+            <NewTimerDay key={ day.key }
+                         timer={ props.newTimerData }
+                         day={ day }
+                         onChangeAlarm={ props.changeAlarm }/>
+        )})}
+      </div>
+    </div>
+  );
 }
 
 const TimerList = (props) => {
@@ -202,9 +120,124 @@ const TimerDay = (props) => {
 
 
 class App extends Component {
+  static initialNewTimerState = () => ({
+    'newTimerData': {
+      'id': 0,
+      'time': '00:00',
+      'days': [
+        {
+          'key': 'monday',
+          'displayname': 'Mon',
+          'alarm': false,
+        },
+        {
+          'key': 'tuesday',
+          'displayname': 'Tue',
+          'alarm': false,
+        },
+        {
+          'key': 'wednesday',
+          'displayname': 'Wed',
+          'alarm': false,
+        },
+        {
+          'key': 'thursday',
+          'displayname': 'Thu',
+          'alarm': false,
+        },
+        {
+          'key': 'friday',
+          'displayname': 'Fri',
+          'alarm': false,
+        },
+        {
+          'key': 'saturday',
+          'displayname': 'Sat',
+          'alarm': false,
+        },
+        {
+          'key': 'sunday',
+          'displayname': 'Sun',
+          'alarm': false,
+        },
+      ]
+    }
+  });
+  resetNewTimer = () => this.setState(App.initialNewTimerState());
   state = {
     color: '#fff',
     timers: [],
+    'newTimerData': {
+      'id': 0,
+      'time': '00:00',
+      'days': [
+        {
+          'key': 'monday',
+          'displayname': 'Mon',
+          'alarm': false,
+        },
+        {
+          'key': 'tuesday',
+          'displayname': 'Tue',
+          'alarm': false,
+        },
+        {
+          'key': 'wednesday',
+          'displayname': 'Wed',
+          'alarm': false,
+        },
+        {
+          'key': 'thursday',
+          'displayname': 'Thu',
+          'alarm': false,
+        },
+        {
+          'key': 'friday',
+          'displayname': 'Fri',
+          'alarm': false,
+        },
+        {
+          'key': 'saturday',
+          'displayname': 'Sat',
+          'alarm': false,
+        },
+        {
+          'key': 'sunday',
+          'displayname': 'Sun',
+          'alarm': false,
+        },
+      ]
+    }
+  };
+
+  changeAlarm = (day) => {
+    this.setState(prevState => {
+      let newTimerData = prevState.newTimerData;
+      newTimerData.days.find((o, i) => {
+        if (o.key === day) {
+          newTimerData.days[i]['alarm'] = !newTimerData.days[i]['alarm'];
+          return true;
+        }
+      });
+      return {
+        'newTimerData': newTimerData
+      };
+    });
+  };
+
+  changeTime = (time) => {
+    this.setState(prevState => {
+      let newTimerData = prevState.newTimerData;
+      newTimerData['time'] = time.format('HH:mm');
+      return {
+        'newTimerData': newTimerData
+      };
+    });
+  };
+
+  saveTimer = () => {
+    this.addTimer(this.state.newTimerData);
+    this.resetNewTimer();
   };
 
   handleColorChangeComplete = (color) => {
@@ -212,7 +245,6 @@ class App extends Component {
   };
 
   addTimer = (timerData) => {
-    console.log("add timer: ", timerData);
     this.setState((prevState) => {
       timerData['id'] = prevState.timers.length;
       return { timers: [...prevState.timers, timerData] }
@@ -226,7 +258,11 @@ class App extends Component {
         <hr />
         <Color onChangeComplete={ this.handleColorChangeComplete }
                selectedColor={ this.state.color }/>
-        <NewTimer onAddTimer={ this.addTimer }/>
+        <NewTimer newTimerData={ this.state.newTimerData }
+                  onAddTimer={ this.addTimer }
+                  changeAlarm={ this.changeAlarm }
+                  changeTime={ this.changeTime }
+                  saveTimer={ this.saveTimer }/>
         <TimerList timers={ this.state.timers }/>
       </div>
     );
