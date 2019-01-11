@@ -14,49 +14,6 @@ import { faIgloo } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faIgloo)
 
-let timerId = 0;
-const timerDefault = {
-  'id': timerId,
-  'time': '00:00',
-  'days': [
-    {
-      'key': 'monday',
-      'displayname': 'Mon',
-      'alarm': false,
-    },
-    {
-      'key': 'tuesday',
-      'displayname': 'Tue',
-      'alarm': false,
-    },
-    {
-      'key': 'wednesday',
-      'displayname': 'Wed',
-      'alarm': false,
-    },
-    {
-      'key': 'thursday',
-      'displayname': 'Thu',
-      'alarm': false,
-    },
-    {
-      'key': 'friday',
-      'displayname': 'fri',
-      'alarm': false,
-    },
-    {
-      'key': 'saturday',
-      'displayname': 'sat',
-      'alarm': false,
-    },
-    {
-      'key': 'sunday',
-      'displayname': 'sun',
-      'alarm': false,
-    },
-  ]
-};
-
 const Color = (props) => {
   return (
     <div className="card mb-3">
@@ -73,42 +30,118 @@ const Color = (props) => {
   );
 }
 
-const showSecond = true;
-const str = showSecond ? 'HH:mm:ss' : 'HH:mm';
-function onChange(value) {
-  console.log(value && value.format(str));
-}
+class NewTimer extends Component {
+  static initialState = () => ({
+    'newTimerData': {
+      'id': 0,
+      'time': '00:00',
+      'days': [
+        {
+          'key': 'monday',
+          'displayname': 'Mon',
+          'alarm': false,
+        },
+        {
+          'key': 'tuesday',
+          'displayname': 'Tue',
+          'alarm': false,
+        },
+        {
+          'key': 'wednesday',
+          'displayname': 'Wed',
+          'alarm': false,
+        },
+        {
+          'key': 'thursday',
+          'displayname': 'Thu',
+          'alarm': false,
+        },
+        {
+          'key': 'friday',
+          'displayname': 'Fri',
+          'alarm': false,
+        },
+        {
+          'key': 'saturday',
+          'displayname': 'Sat',
+          'alarm': false,
+        },
+        {
+          'key': 'sunday',
+          'displayname': 'Sun',
+          'alarm': false,
+        },
+      ]
+    }
+  });
+  state = NewTimer.initialState();
+  resetNewTimer = () => this.setState(NewTimer.initialState());
 
-const Timer = (props) => {
-  return (
-    <div className="card mb-3">
-      <div className="card-header">
-        <b>New Timer</b>
+  changeAlarm = (day) => {
+    console.log("changeAlarm", day);
+    this.setState(prevState => {
+      let newTimerData = prevState.newTimerData;
+      newTimerData.days.find((o, i) => {
+        if (o.key === day) {
+          newTimerData.days[i]['alarm'] = !newTimerData.days[i]['alarm'];
+          return true;
+        }
+      });
+      console.log(this.state.newTimerData);
+      return {
+        'newTimerData': newTimerData
+      };
+    });
+  };
+
+  changeTime = (time) => {
+    console.log("changeTime", time.format('HH:mm'));
+    this.setState(prevState => {
+      let newTimerData = prevState.newTimerData;
+      newTimerData['time'] = time.format('HH:mm');
+      return {
+        'newTimerData': newTimerData
+      };
+    });
+  };
+
+  saveTimer = () => {
+    console.log("saveTimer", this.state.newTimerData);
+    this.props.onAddTimer(this.state.newTimerData);
+    this.resetNewTimer();
+  };
+
+  render() {
+    return (
+      <div className="card mb-3">
+        <div className="card-header">
+          <b>New Timer</b>
+        </div>
+        <div className="card-body">
+          <TimePicker
+            style={{ width: 60 }}
+            showSecond={ false }
+            defaultValue={moment()}
+            className="timepicker"
+            onChange={ this.changeTime }
+          />
+          <button type="button"
+                  className="btn btn-primary ml-2"
+                  onClick={ this.saveTimer }>
+            Add timer
+          </button>
+          <br/>
+          {this.state.newTimerData.days.map((day) => {
+            return (
+              <NewTimerDay key={ day.key }
+                           timer={ this.state.newTimerData }
+                           day={ day }
+                           onChangeAlarm={ this.changeAlarm }/>
+          )})}
+        </div>
       </div>
-      <div className="card-body">
-        <TimePicker
-          style={{ width: 60 }}
-          showSecond={ false }
-          defaultValue={moment()}
-          className="timepicker"
-          onChange={onChange}
-        />
-        <button type="button"
-                className="btn btn-primary ml-2"
-                onClick={ props.addTimer }>
-          Add timer
-        </button>
-        <br/>
-        <NewTimerDay day={ "Mon" }/>
-        <NewTimerDay day={ "Tue" }/>
-        <NewTimerDay day={ "Wed" }/>
-        <NewTimerDay day={ "Thu" }/>
-        <NewTimerDay day={ "Fri" }/>
-        <NewTimerDay day={ "Sat" }/>
-        <NewTimerDay day={ "Sun" }/>
-      </div>
-    </div>
-  );
+    );
+  };
 }
 
 const TimerList = (props) => {
@@ -120,12 +153,13 @@ const TimerList = (props) => {
       <div className="card-body p-0">
         <ul className="list-group">
           {props.timers.map((timer) => {
-            return (<li className="list-group-item">
+            return (<li key={ timer.id } className="list-group-item">
               { timer.time }
               <br/>
               {timer.days.map((day) => {
                 return (
-                  <TimerDay timer={ timer }
+                  <TimerDay key={ day.key }
+                            timer={ timer }
                             day={ day }/>
               )})}
             </li>
@@ -137,14 +171,16 @@ const TimerList = (props) => {
 }
 
 const NewTimerDay = (props) => {
-  const id = "new-timer-" + props.day;
+  const id = "new-timer-" + props.day.key;
   return (
     <div className="custom-control custom-checkbox custom-control-inline mt-2">
       <input type="checkbox"
              className="custom-control-input"
-             id={ id } />
+             id={ id }
+             onChange={ () =>  props.onChangeAlarm(props.day.key) }
+             defaultChecked={ false }/>
       <label className="custom-control-label"
-             htmlFor={ id } >{ props.day }</label>
+             htmlFor={ id } >{ props.day.displayname }</label>
     </div>
   );
 }
@@ -168,94 +204,19 @@ const TimerDay = (props) => {
 class App extends Component {
   state = {
     color: '#fff',
-    timers: [
-      {
-        'id': 0,
-        'time': '06:00',
-        'days': [
-          {
-            'key': 'monday',
-            'displayname': 'Mon',
-            'alarm': true,
-          },
-          {
-            'key': 'tuesday',
-            'displayname': 'Tue',
-            'alarm': true,
-          },
-          {
-            'key': 'wednesday',
-            'displayname': 'Wed',
-            'alarm': true,
-          },
-          {
-            'key': 'thursday',
-            'displayname': 'Thu',
-            'alarm': true,
-          },
-          {
-            'key': 'friday',
-            'displayname': 'fri',
-            'alarm': true,
-          },
-          {
-            'key': 'saturday',
-            'displayname': 'sat',
-            'alarm': false,
-          },
-          {
-            'key': 'sunday',
-            'displayname': 'sun',
-            'alarm': false,
-          },
-        ]
-      },
-      {
-        'id': 1,
-        'time': '15:30',
-        'days': [
-          {
-            'key': 'monday',
-            'displayname': 'Mon',
-            'alarm': false,
-          },
-          {
-            'key': 'tuesday',
-            'displayname': 'Tue',
-            'alarm': true,
-          },
-          {
-            'key': 'wednesday',
-            'displayname': 'Wed',
-            'alarm': false,
-          },
-          {
-            'key': 'thursday',
-            'displayname': 'Thu',
-            'alarm': true,
-          },
-          {
-            'key': 'friday',
-            'displayname': 'fri',
-            'alarm': true,
-          },
-          {
-            'key': 'saturday',
-            'displayname': 'sat',
-            'alarm': true,
-          },
-          {
-            'key': 'sunday',
-            'displayname': 'sun',
-            'alarm': false,
-          },
-        ]
-      }
-    ]
+    timers: [],
   };
 
   handleColorChangeComplete = (color) => {
     this.setState({ color: color.hex });
+  };
+
+  addTimer = (timerData) => {
+    console.log("add timer: ", timerData);
+    this.setState((prevState) => {
+      timerData['id'] = prevState.timers.length;
+      return { timers: [...prevState.timers, timerData] }
+    });
   };
 
   render() {
@@ -265,7 +226,7 @@ class App extends Component {
         <hr />
         <Color onChangeComplete={ this.handleColorChangeComplete }
                selectedColor={ this.state.color }/>
-        <Timer />
+        <NewTimer onAddTimer={ this.addTimer }/>
         <TimerList timers={ this.state.timers }/>
       </div>
     );
