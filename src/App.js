@@ -40,7 +40,8 @@ const NewTimer = (props) => {
         <TimePicker
           style={{ width: 60 }}
           showSecond={ false }
-          defaultValue={moment()}
+          defaultValue={ moment() }
+          value={ props.newTimerData.timestamp }
           className="timepicker"
           onChange={ props.changeTime }
         />
@@ -55,7 +56,8 @@ const NewTimer = (props) => {
             <NewTimerDay key={ day.key }
                          timer={ props.newTimerData }
                          day={ day }
-                         onChangeAlarm={ props.changeAlarm }/>
+                         onChangeAlarm={ props.changeAlarm }
+                         alarm={ day.alarm }/>
         )})}
       </div>
     </div>
@@ -96,6 +98,7 @@ const NewTimerDay = (props) => {
              className="custom-control-input"
              id={ id }
              onChange={ () =>  props.onChangeAlarm(props.day.key) }
+             checked={ props.alarm }
              defaultChecked={ false }/>
       <label className="custom-control-label"
              htmlFor={ id } >{ props.day.displayname }</label>
@@ -123,7 +126,8 @@ class App extends Component {
   static initialNewTimerState = () => ({
     'newTimerData': {
       'id': 0,
-      'time': '00:00',
+      'time': moment().format('HH:mm'),
+      'timestamp': moment(),
       'days': [
         {
           'key': 'monday',
@@ -169,7 +173,8 @@ class App extends Component {
     timers: [],
     'newTimerData': {
       'id': 0,
-      'time': '00:00',
+      'time': moment().format('HH:mm'),
+      'timestamp': moment(),
       'days': [
         {
           'key': 'monday',
@@ -229,6 +234,7 @@ class App extends Component {
     this.setState(prevState => {
       let newTimerData = prevState.newTimerData;
       newTimerData['time'] = time.format('HH:mm');
+      newTimerData['timestamp'] = time;
       return {
         'newTimerData': newTimerData
       };
