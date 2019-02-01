@@ -1,4 +1,5 @@
 import moment from 'moment';
+import fire from './fire';
 
 
 export default class Timer {
@@ -59,7 +60,19 @@ export default class Timer {
     }
 
     save = () => {
-        this.data['id'] = Math.random(9999)
+        this.data['id'] = Math.floor(Math.random() * 9999);
+        const firebaseData = {
+            'active': true,
+            'time': this.data['time'],
+            'monday': this.data['days'][0]['alarm'],
+            'tuesday': this.data['days'][1]['alarm'],
+            'wednesday': this.data['days'][2]['alarm'],
+            'thursday': this.data['days'][3]['alarm'],
+            'friday': this.data['days'][4]['alarm'],
+            'saturday': this.data['days'][5]['alarm'],
+            'sunday': this.data['days'][6]['alarm'],
+        };
         // Save timer in database
+        fire.database().ref('timer/' + this.data['id']).set(firebaseData);
     }
 }
