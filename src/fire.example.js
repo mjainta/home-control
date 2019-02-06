@@ -9,4 +9,5 @@ var config = {
     messagingSenderId: "your messaging sender id"
 };
 var fire = firebase.initializeApp(config);
+fire.auth().signInWithEmailAndPassword('your email', 'your password')
 export default fire;
