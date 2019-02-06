@@ -10,12 +10,12 @@ import ReactDOM from 'react-dom';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faIgloo } from '@fortawesome/free-solid-svg-icons'
+import { faIgloo, faTrash, faClock } from '@fortawesome/free-solid-svg-icons'
 
 import Timer from './Timer';
 import fire from './fire';
 
-library.add(faIgloo)
+library.add(faIgloo, faTrash, faClock)
 
 const Color = (props) => {
   return (
@@ -40,7 +40,7 @@ const NewTimer = (props) => {
         <b>New Timer</b>
       </div>
       <div className="card-body">
-        <TimePicker
+      <FontAwesomeIcon icon={ faClock } /> <TimePicker
           style={{ width: 60 }}
           showSecond={ false }
           defaultValue={ moment() }
@@ -76,7 +76,7 @@ const TimerList = (props) => {
         <ul className="list-group">
           {props.timers.map((timer) => {
             return (<li key={ timer.id } className="list-group-item">
-              { timer.time }
+              <FontAwesomeIcon icon={ faClock } /> { timer.time }
               <br/>
               {timer.days.map((day) => {
                 return (
@@ -84,6 +84,11 @@ const TimerList = (props) => {
                             timer={ timer }
                             day={ day }/>
               )})}
+              <button type="button"
+                      className="btn btn-danger ml-2"
+                      onClick={ () => props.deleteTimer(timer.id) }>
+                <FontAwesomeIcon icon={ faTrash } />
+              </button>
             </li>
           )})}
         </ul>
@@ -172,6 +177,13 @@ class App extends Component {
     this.fetchTimers();
   };
 
+  deleteTimer = (timerId) => {
+    fire.firestore().collection('timer').doc(timerId).delete()
+    .then(() => {
+      this.fetchTimers();
+    });
+  };
+
   render() {
     this.fetchTimers();
 
@@ -185,7 +197,8 @@ class App extends Component {
                   changeAlarm={ this.changeAlarm }
                   changeTime={ this.changeTime }
                   saveTimer={ this.saveTimer }/>
-        <TimerList timers={ this.state.timers }/>
+        <TimerList timers={ this.state.timers }
+                   deleteTimer={ this.deleteTimer }/>
       </div>
     );
   };
