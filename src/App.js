@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faIgloo } from '@fortawesome/free-solid-svg-icons'
 
 import Timer from './Timer';
+import fire from './fire';
 
 library.add(faIgloo)
 
@@ -43,7 +44,6 @@ const NewTimer = (props) => {
           style={{ width: 60 }}
           showSecond={ false }
           defaultValue={ moment() }
-          value={ props.newTimer.data.timestamp }
           className="timepicker"
           onChange={ props.changeTime }
         />
@@ -134,6 +134,16 @@ class App extends Component {
     'newTimer': new Timer(),
   };
 
+  fetchTimers = () => {
+    fire.firestore().collection('timer').get().then((querySnapshot) => {
+        let timers = [];
+        querySnapshot.forEach(function(doc) {
+            timers.push(doc.data());
+        });
+        this.setState({ timers: timers });
+    });
+  }
+
   changeAlarm = (day) => {
     this.setState((prevState) => {
       this.state.newTimer.switchAlarm(day);
@@ -159,12 +169,12 @@ class App extends Component {
 
   addTimer = () => {
     this.state.newTimer.save();
-    this.setState((prevState) => {
-      return { timers: [...prevState.timers, this.state.newTimer.data] }
-    });
+    this.fetchTimers();
   };
 
   render() {
+    this.fetchTimers();
+
     return (
       <div className="container">
         <h3>Home Control</h3>

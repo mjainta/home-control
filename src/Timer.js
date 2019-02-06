@@ -6,7 +6,6 @@ export default class Timer {
     data = {
         'id': 0,
         'time': moment().format('HH:mm'),
-        'timestamp': moment(),
         'days': [
         {
             'key': 'monday',
@@ -56,23 +55,12 @@ export default class Timer {
 
     changeTime = (time) => {
         this.data['time'] = time.format('HH:mm');
-        this.data['timestamp'] = time;
     }
 
     save = () => {
-        this.data['id'] = Math.floor(Math.random() * 9999);
-        const firebaseData = {
-            'active': true,
-            'time': this.data['time'],
-            'monday': this.data['days'][0]['alarm'],
-            'tuesday': this.data['days'][1]['alarm'],
-            'wednesday': this.data['days'][2]['alarm'],
-            'thursday': this.data['days'][3]['alarm'],
-            'friday': this.data['days'][4]['alarm'],
-            'saturday': this.data['days'][5]['alarm'],
-            'sunday': this.data['days'][6]['alarm'],
-        };
+        const doc = fire.firestore().collection('timer').doc();
+        this.data['id'] = doc.id;
         // Save timer in database
-        fire.database().ref('timer/' + this.data['id']).set(firebaseData);
+        doc.set(this.data);
     }
 }
