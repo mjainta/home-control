@@ -15,6 +15,8 @@ import { faIgloo, faTrash, faClock } from '@fortawesome/free-solid-svg-icons'
 import Timer from './Timer';
 import fire from './fire';
 
+import axios from 'axios'
+
 library.add(faIgloo, faTrash, faClock)
 
 const Color = (props) => {
@@ -174,6 +176,17 @@ class App extends Component {
 
   handleColorChangeComplete = (color) => {
     this.setState({ color: color.hex });
+    const url = process.env.REACT_APP_BACKEND_URL + "/send-mqtt";
+    const message = {
+      message: color.hex
+    };
+    axios({
+      method: 'post',
+      url,
+      data: message
+    })
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
   };
 
   addTimer = () => {
