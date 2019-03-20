@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-import { CirclePicker, ChromePicker } from 'react-color';
+import { CirclePicker } from 'react-color';
 
 import moment from 'moment';
 import TimePicker from 'rc-time-picker';
-import ReactDOM from 'react-dom';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
