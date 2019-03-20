@@ -137,6 +137,7 @@ class App extends Component {
     color: '#fff',
     timers: [],
     'newTimer': new Timer(),
+    'fetchedTimers': false,
   };
 
   fetchTimers = () => {
@@ -145,7 +146,10 @@ class App extends Component {
         querySnapshot.forEach(function(doc) {
             timers.push(doc.data());
         });
-        this.setState({ timers: timers });
+        this.setState({
+          timers: timers,
+          fetchedTimers: true,
+        });
     });
   }
 
@@ -185,7 +189,9 @@ class App extends Component {
   };
 
   render() {
-    this.fetchTimers();
+    if (!this.state.fetchedTimers) {
+      this.fetchTimers();
+    }
 
     return (
       <div className="container">
