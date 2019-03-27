@@ -15,7 +15,17 @@ mqttClient.connect();
 app.options("/send-mqtt", cors());
 app.post("/send-mqtt", function(req, res) {
   console.log(req.body);
-  mqttClient.sendMessage(req.body.message);
+  const mqttJson = {
+    "brightness": 255,
+    "color": {
+      "r": req.body.color.r,
+      "g": req.body.color.g,
+      "b": req.body.color.b,
+    },
+    "state": "ON"
+  };
+  mqttClient.sendMessage(JSON.stringify(mqttJson));
+
   res.status(200).send("Message sent to mqtt");
 });
 

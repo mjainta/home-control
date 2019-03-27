@@ -176,7 +176,7 @@ class App extends Component {
     this.setState({ color: color.hex });
     const url = process.env.REACT_APP_BACKEND_URL + "/send-mqtt";
     const message = {
-      message: color.hex
+      color: color.rgb
     };
     axios({
       method: 'post',
