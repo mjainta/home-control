@@ -4,13 +4,21 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm start` - Start frontend
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
+
+### Start backend
+
+You need to start the `backend/app.js` to be able to connect to a MQTT broker:
+```bash
+HOME_CONTROL_MQTT_TOPIC=home/bedroomled node backend/app.js
+```
+The environment variable sets the topic to publish to. It can be subscribed for example by a microcontroller.
 
 ### `npm test`
 

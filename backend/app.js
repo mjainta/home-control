@@ -8,7 +8,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
-var mqttClient = new mqttHandler();
+if (typeof process.env.HOME_CONTROL_MQTT_TOPIC == 'undefined') {
+  throw "Set environment variable HOME_CONTROL_MQTT_TOPIC to continue!";
+}
+
+var mqttClient = new mqttHandler(process.env.HOME_CONTROL_MQTT_TOPIC);
 mqttClient.connect();
 
 // Routes
