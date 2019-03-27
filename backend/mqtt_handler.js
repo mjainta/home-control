@@ -1,5 +1,6 @@
 const mqtt = require('mqtt');
 
+const mqtt_topic = 'mytopic'
 class MqttHandler {
   constructor() {
     this.mqttClient = null;
@@ -22,7 +23,7 @@ class MqttHandler {
     });
 
     // mqtt subscriptions
-    this.mqttClient.subscribe('mytopic', {qos: 0});
+    this.mqttClient.subscribe(mqtt_topic, {qos: 0});
 
     // When a message arrives, console.log it
     this.mqttClient.on('message', function (topic, message) {
@@ -34,9 +35,9 @@ class MqttHandler {
     });
   }
 
-  // Sends a mqtt message to topic: mytopic
+  // Sends a mqtt message to configured topic
   sendMessage(message) {
-    this.mqttClient.publish('mytopic', message);
+    this.mqttClient.publish(mqtt_topic, message);
   }
 }
 
