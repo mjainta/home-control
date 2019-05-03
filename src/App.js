@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { CirclePicker } from 'react-color';
+import { ChromePicker } from 'react-color';
 
 import moment from 'moment';
 import TimePicker from 'rc-time-picker';
@@ -26,8 +26,9 @@ const Color = (props) => {
       </div>
       <div className="card-body">
         <h5 className="card-title">Change LED color</h5>
-        <CirclePicker onChangeComplete={ props.onChangeComplete }
-                      color={ props.selectedColor }/>
+        <ChromePicker onChangeComplete={ props.onChangeComplete }
+                      color={ props.selectedColor }
+                      disableAlpha={ true }/>
       </div>
     </div>
   );
