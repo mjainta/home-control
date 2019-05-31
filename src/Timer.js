@@ -1,5 +1,5 @@
 import moment from 'moment';
-import fire from './fire';
+import axios from 'axios';
 
 
 export default class Timer {
@@ -57,10 +57,16 @@ export default class Timer {
         this.data['time'] = time.format('HH:mm');
     }
 
-    save = () => {
-        const doc = fire.firestore().collection('timer').doc();
-        this.data['id'] = doc.id;
+    save = (callback) => {
         // Save timer in database
-        doc.set(this.data);
+        console.log(this.data);
+        const url = process.env.REACT_APP_BACKEND_URL + "/timer";
+        axios({
+            method: 'post',
+            url,
+            data: this.data
+        })
+        .then(() => callback())
+        .catch(err => console.log(err))
     }
 }

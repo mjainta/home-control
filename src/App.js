@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faIgloo, faTrash, faClock } from '@fortawesome/free-solid-svg-icons'
 
 import Timer from './Timer';
-import fire from './fire';
 
 import axios from 'axios'
 
@@ -142,17 +141,24 @@ class App extends Component {
   };
 
   fetchTimers = () => {
-    fire.firestore().collection('timer').get().then((querySnapshot) => {
-        let timers = [];
-        querySnapshot.forEach(function(doc) {
-            timers.push(doc.data());
-        });
-        this.setState({
-          timers: timers,
-          fetchedTimers: true,
-        });
-    });
+    const url = process.env.REACT_APP_BACKEND_URL + "/timer";
+    axios({
+        method: 'get',
+        url,
+        data: this.data
+    })
+    .then((rsp) => this.updateTimers(rsp.data, true))
+    .catch(err => console.log(err))
   }
+
+  updateTimers = (data, fetched = false) => {
+    console.log(data)
+
+    this.setState({
+      timers: data,
+      fetchedTimers: fetched,
+    });
+  };
 
   changeAlarm = (day) => {
     this.setState((prevState) => {
@@ -189,15 +195,18 @@ class App extends Component {
   };
 
   addTimer = () => {
-    this.state.newTimer.save();
-    this.fetchTimers();
+    this.state.newTimer.save(this.fetchTimers);
   };
 
   deleteTimer = (timerId) => {
-    fire.firestore().collection('timer').doc(timerId).delete()
-    .then(() => {
-      this.fetchTimers();
-    });
+    console.log(timerId);
+    const url = process.env.REACT_APP_BACKEND_URL + "/timer/" + timerId;
+    axios({
+        method: 'delete',
+        url
+    })
+    .then(() => this.fetchTimers())
+    .catch(err => console.log(err))
   };
 
   render() {
