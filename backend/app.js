@@ -33,6 +33,7 @@ app.use(function(req, res, next) {
 app.options("/timer", cors());
 app.post("/timer", function(req, res) {
   req.body.id = db.get('count').value();
+  console.log("ADD Timer");
   console.log(req.body);
   db.get('timers')
     .push(req.body)
@@ -46,6 +47,7 @@ app.post("/timer", function(req, res) {
 });
 
 app.get("/timer", function(req, res) {
+  console.log("GET ALL Timers");
   timers = db.get('timers');
   res.status(200).send(timers);
 });
@@ -63,7 +65,7 @@ app.delete("/timer/:timerId", function(req, res) {
 
 app.options("/send-mqtt", cors());
 app.post("/send-mqtt", function(req, res) {
-  console.log(req.body);
+  console.log("SEND MQTT");
   const mqttJson = {
     "brightness": 255,
     "color": {
@@ -73,6 +75,7 @@ app.post("/send-mqtt", function(req, res) {
     },
     "state": "ON"
   };
+  console.log(mqttJson);
   mqttClient.sendMessage(JSON.stringify(mqttJson));
 
   res.status(200).send("Message sent to mqtt");
